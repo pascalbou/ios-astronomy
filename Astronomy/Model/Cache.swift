@@ -8,27 +8,20 @@
 
 import Foundation
 
-class Cache<Key, Value> where Key: Hashable {
+class Cache<Key: Hashable, Value> {
     private(set) var items: [Key: Value] = [:]
     private let queue = DispatchQueue(label: "Caching Queue")
     
-    func cache(key: Key, value: Value) {
+    func cache(for key: Key, value: Value) {
         queue.async {
             self.items[key] = value
         }
     }
     
-    func value(key: Key) -> Value {
+    func value(for key: Key) -> Value? {
         queue.sync {
-            let result = items[key]!
-            return result
+            return self.items[key]
         }
     }
     
-    func check(key: Key) -> Bool {
-        guard let _ = items[key] else { return false }
-        return true
-    }
-    
-
 }
